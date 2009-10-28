@@ -1,0 +1,10 @@
+6502.NET -- http://github.com/joeyrobert/6502.NET
+Copyright (c) 2009 Joseph Robert. All rights reserved.
+
+6502.NET is MOS Technology 6502  (an 8-bit microprocessor that powered the 
+Apple II, Commodore 64, Atari 2600 and NES) emulator written in C# and .NET. 
+6502.NET has approximately 40% opcode coverage. On a modern computer 6502.NET 
+can operate up to 100 MHz and is both Windows .NET and Mono compatible.
+
+6502.NET features both a Winforms GUI and a console display. It was inspired by 
+6502asm.com: a 6502 compatible assembler and emulator in Javascript. 

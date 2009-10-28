@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual C# Express 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Emulator", "Emulator\Emulator.csproj", "{75D7E2D4-AD73-4F2B-AA85-BC6A85BF5B8D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Emulator.Display.Text", "Emulator.Display.Text\Emulator.Display.Text.csproj", "{636AD5E4-C7D6-47FA-B3E7-D6B8BE6C8C81}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Emulator.Display.Graphics", "Emulator.Display.Graphics\Emulator.Display.Graphics.csproj", "{AA8AD231-9861-4AFB-AB48-D1D71986DBEB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{75D7E2D4-AD73-4F2B-AA85-BC6A85BF5B8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75D7E2D4-AD73-4F2B-AA85-BC6A85BF5B8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75D7E2D4-AD73-4F2B-AA85-BC6A85BF5B8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75D7E2D4-AD73-4F2B-AA85-BC6A85BF5B8D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{636AD5E4-C7D6-47FA-B3E7-D6B8BE6C8C81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{636AD5E4-C7D6-47FA-B3E7-D6B8BE6C8C81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{636AD5E4-C7D6-47FA-B3E7-D6B8BE6C8C81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{636AD5E4-C7D6-47FA-B3E7-D6B8BE6C8C81}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA8AD231-9861-4AFB-AB48-D1D71986DBEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA8AD231-9861-4AFB-AB48-D1D71986DBEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA8AD231-9861-4AFB-AB48-D1D71986DBEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA8AD231-9861-4AFB-AB48-D1D71986DBEB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
