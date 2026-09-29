@@ -1,37 +1,49 @@
-﻿/* Copyright (c) 2009 Joseph Robert. All rights reserved.
+/* Copyright (c) 2009 Joseph Robert. All rights reserved.
  *
  * This file is part of 6502.NET.
- * 
+ *
  * 6502.NET is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 3.0  of 
+ * published by the Free Software Foundation; either version 3.0  of
  * the License, or (at your option) any later version.
- * 
- * 6502.NET is distributed in the hope that it will be useful, but 
+ *
+ * 6502.NET is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License 
+ *
+ * You should have received a copy of the GNU General Public License
  * along with 6502.NET.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using System;
-using System.Collections.Generic;
-using System.Windows.Forms;
-using System.Threading;
+using Emulator.Interpreter;
 
-namespace Emulator.Display.Graphics
+namespace Emulator.Display.Graphics;
+
+static class Program
 {
-    static class Program
+    /// <summary>Usage: 6502net-gui [program.asm | example name]</summary>
+    [STAThread]
+    static int Main(string[] args)
     {
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        static void Main()
+        ApplicationConfiguration.Initialize();
+
+        string name = args.Length > 0 ? args[0] : "disco";
+        if (!File.Exists(name) && Path.GetExtension(name) == "")
+            name = Path.Combine(AppContext.BaseDirectory, "Examples", name + ".asm");
+
+        AssembledProgram program;
+        try
         {
-            Application.Run(new GraphicsDisplay());
+            program = Assembler.AssembleFile(name);
         }
+        catch (Exception e) when (e is IOException or AssemblyException)
+        {
+            MessageBox.Show(e.Message, "6502.NET", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return 1;
+        }
+
+        Application.Run(new GraphicsDisplay(program, Path.GetFileName(name)));
+        return 0;
     }
 }
