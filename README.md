@@ -26,6 +26,12 @@ site run unchanged.
 The 32x32 screen makes for some fun demos. These screenshots were produced with `--headless N --png`
 (see below); the animated ones (`tunnel`, `bouncing_ball`, `disco`, `random_dots`) move when run for real.
 
+![tunnel animation](docs/screenshots/tunnel.gif)
+![bouncing ball animation](docs/screenshots/bouncing_ball.gif)
+
+`tunnel` and `bouncing_ball`, recorded with `--gif` (the occasional tear in `tunnel` is real: the 6502 redraws the
+whole screen pixel by pixel, so frames are sometimes caught half-drawn).
+
 | | | |
 | --- | --- | --- |
 | ![sierpinski](docs/screenshots/sierpinski.png) | ![smiley](docs/screenshots/smiley.png) | ![tunnel](docs/screenshots/tunnel.png) |
@@ -52,6 +58,9 @@ terminals work); press Ctrl+C to quit. Options: `--mhz X` sets the emulated cloc
 `--headless N` runs `N` instructions without a display and prints the registers and the screen, which is handy for
 scripts and CI. Add `--png screen.png [--scale 8]` to save the final screen as an image, e.g.
 `dotnet run --project Emulator.Display.Text -- sierpinski --headless 100000 --png sierpinski.png`.
+
+To record an animated GIF, use `--gif` with `--seconds` (emulated time), `--fps`, `--scale` and `--mhz`:
+`dotnet run --project Emulator.Display.Text -- tunnel --gif tunnel.gif --seconds 2 --fps 20 --scale 6`.
 
 On Windows the graphical display shows the real colours:
 

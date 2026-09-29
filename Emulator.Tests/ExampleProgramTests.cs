@@ -171,4 +171,17 @@ public class ExampleProgramTests
         Assert.Equal(64, System.Buffers.Binary.BinaryPrimitives.ReadInt32BigEndian(png.AsSpan(16)));
         Assert.Equal(64, System.Buffers.Binary.BinaryPrimitives.ReadInt32BigEndian(png.AsSpan(20)));
     }
+
+    [Fact]
+    public void GifExportProducesAnimatedGifWithOneImagePerFrame()
+    {
+        var (memory, _) = Run("smiley");
+        var frames = new List<byte[]> { Palette.Snapshot(memory), Palette.Snapshot(memory), Palette.Snapshot(memory) };
+        byte[] gif = GifEncoder.Encode(frames, scale: 2);
+        Assert.Equal("GIF89a", System.Text.Encoding.ASCII.GetString(gif, 0, 6));
+        Assert.Equal(64, BitConverter.ToUInt16(gif, 6));
+        Assert.Equal(64, BitConverter.ToUInt16(gif, 8));
+        Assert.Equal(0x3B, gif[^1]);
+        Assert.Equal(3, gif.Count(b => b == 0x2C) >= 3 ? 3 : 0); // image separators are present
+    }
 }

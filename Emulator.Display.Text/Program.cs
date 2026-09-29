@@ -26,7 +26,10 @@ const string Usage = """
 
       --headless N   run N instructions without a display, then print registers and the screen
       --png FILE     with --headless, also save the final screen as a PNG
-      --scale N      pixel size of the PNG (default 8)
+      --gif FILE     record an animated GIF of the program (no display); see --seconds and --fps
+      --seconds S    length of the GIF recording in emulated seconds (default 4)
+      --fps N        GIF frame rate (default 25)
+      --scale N      pixel size of the PNG / GIF (default 8)
       --mhz X        emulated clock speed in MHz (default 4)
       --no-throttle  run at full speed
       --letters      draw pixels as letters a-p instead of colour blocks
@@ -43,6 +46,9 @@ long? headless = null;
 bool throttle = true;
 bool letters = false;
 string? pngPath = null;
+string? gifPath = null;
+double seconds = 4;
+int fps = 25;
 int scale = 8;
 double mhz = 4;
 
@@ -63,6 +69,17 @@ for (int i = 0; i < args.Length; i++)
             break;
         case "--png" when i + 1 < args.Length:
             pngPath = args[++i];
+            break;
+        case "--gif" when i + 1 < args.Length:
+            gifPath = args[++i];
+            break;
+        case "--seconds" when i + 1 < args.Length && double.TryParse(args[i + 1], out double sec) && sec > 0:
+            seconds = sec;
+            i++;
+            break;
+        case "--fps" when i + 1 < args.Length && int.TryParse(args[i + 1], out int f) && f > 0:
+            fps = f;
+            i++;
             break;
         case "--scale" when i + 1 < args.Length && int.TryParse(args[i + 1], out int sc) && sc > 0:
             scale = sc;
@@ -101,6 +118,23 @@ catch (Exception e) when (e is IOException or AssemblyException)
 var memory = new Memory();
 assembled.Load(memory);
 var processor = new Processor(memory, (ushort)assembled.Entry);
+
+if (gifPath is not null)
+{
+    // Record: advance the emulated clock frame by frame, no real-time waiting.
+    var frames = new List<byte[]>();
+    double cyclesPerFrame = mhz * 1_000_000 / fps;
+    int frameCount = (int)Math.Round(seconds * fps);
+    for (int frame = 1; frame <= frameCount; frame++)
+    {
+        while (processor.ProgramRunning && processor.Cycles < frame * cyclesPerFrame)
+            processor.Step();
+        frames.Add(Palette.Snapshot(memory));
+    }
+    File.WriteAllBytes(gifPath, GifEncoder.Encode(frames, scale, Math.Max(1, 100 / fps)));
+    Console.WriteLine($"Wrote {frames.Count} frames to {gifPath}");
+    return 0;
+}
 
 if (headless is long count)
 {
