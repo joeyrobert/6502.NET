@@ -1,32 +1,40 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual C# Express 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Emulator", "Emulator\Emulator.csproj", "{75D7E2D4-AD73-4F2B-AA85-BC6A85BF5B8D}"
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Emulator", "Emulator\Emulator.csproj", "{01D574C0-BA7E-4794-AEC8-753DFCA0C2ED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Emulator.Display.Text", "Emulator.Display.Text\Emulator.Display.Text.csproj", "{636AD5E4-C7D6-47FA-B3E7-D6B8BE6C8C81}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Emulator.Display.Text", "Emulator.Display.Text\Emulator.Display.Text.csproj", "{C1D01A16-C405-4B85-A331-6AE52759B14C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Emulator.Display.Graphics", "Emulator.Display.Graphics\Emulator.Display.Graphics.csproj", "{AA8AD231-9861-4AFB-AB48-D1D71986DBEB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Emulator.Tests", "Emulator.Tests\Emulator.Tests.csproj", "{AC76125B-BCF8-4017-819C-0212AD2D097F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Emulator.Display.Graphics", "Emulator.Display.Graphics\Emulator.Display.Graphics.csproj", "{7B3E5F0A-2D41-4C6B-9A57-1E8C4D2F6A93}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
-	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{75D7E2D4-AD73-4F2B-AA85-BC6A85BF5B8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{75D7E2D4-AD73-4F2B-AA85-BC6A85BF5B8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{75D7E2D4-AD73-4F2B-AA85-BC6A85BF5B8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{75D7E2D4-AD73-4F2B-AA85-BC6A85BF5B8D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{636AD5E4-C7D6-47FA-B3E7-D6B8BE6C8C81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{636AD5E4-C7D6-47FA-B3E7-D6B8BE6C8C81}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{636AD5E4-C7D6-47FA-B3E7-D6B8BE6C8C81}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{636AD5E4-C7D6-47FA-B3E7-D6B8BE6C8C81}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AA8AD231-9861-4AFB-AB48-D1D71986DBEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AA8AD231-9861-4AFB-AB48-D1D71986DBEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AA8AD231-9861-4AFB-AB48-D1D71986DBEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AA8AD231-9861-4AFB-AB48-D1D71986DBEB}.Release|Any CPU.Build.0 = Release|Any CPU
-	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{01D574C0-BA7E-4794-AEC8-753DFCA0C2ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01D574C0-BA7E-4794-AEC8-753DFCA0C2ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01D574C0-BA7E-4794-AEC8-753DFCA0C2ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01D574C0-BA7E-4794-AEC8-753DFCA0C2ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1D01A16-C405-4B85-A331-6AE52759B14C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1D01A16-C405-4B85-A331-6AE52759B14C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1D01A16-C405-4B85-A331-6AE52759B14C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1D01A16-C405-4B85-A331-6AE52759B14C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC76125B-BCF8-4017-819C-0212AD2D097F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC76125B-BCF8-4017-819C-0212AD2D097F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC76125B-BCF8-4017-819C-0212AD2D097F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC76125B-BCF8-4017-819C-0212AD2D097F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B3E5F0A-2D41-4C6B-9A57-1E8C4D2F6A93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B3E5F0A-2D41-4C6B-9A57-1E8C4D2F6A93}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B3E5F0A-2D41-4C6B-9A57-1E8C4D2F6A93}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B3E5F0A-2D41-4C6B-9A57-1E8C4D2F6A93}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    name: Build and test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Download Klaus Dormann's 6502 functional test
+        shell: bash
+        run: |
+          mkdir -p Emulator.Tests/TestData
+          curl -fsSL -o Emulator.Tests/TestData/6502_functional_test.bin \
+            https://raw.githubusercontent.com/Klaus2m5/6502_65C02_functional_tests/master/bin_files/6502_functional_test.bin
+      - name: Build emulator, text display and tests
+        run: dotnet build Emulator.Tests -c Release
+      - name: Build text display
+        run: dotnet build Emulator.Display.Text -c Release
+      - name: Test
+        run: dotnet test Emulator.Tests -c Release --no-build
+      - name: Run an example headless
+        run: dotnet run --project Emulator.Display.Text -c Release --no-build -- fibonacci --headless 1000
+
+  gui:
+    name: Build WinForms display
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - run: dotnet build Emulator.Display.Graphics -c Release
