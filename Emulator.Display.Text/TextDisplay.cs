@@ -21,9 +21,15 @@ using Emulator.Interpreter;
 
 namespace Emulator.Display.Text;
 
-/// <summary>Renders the 32x32 screen (memory at 0x200) as letters: colour 0 is 'a', 1 is 'b', ... 15 is 'p'.</summary>
+/// <summary>
+/// Renders the 32x32 screen (memory at 0x200). By default as letters (colour 0 is 'a' ... 15 is 'p');
+/// with <see cref="Colour"/> set, as true-colour ANSI blocks, two characters wide per pixel.
+/// </summary>
 public class TextDisplay(Memory memory)
 {
+    /// <summary>Use 24-bit ANSI colour escape codes instead of letters.</summary>
+    public bool Colour { get; set; }
+
     /// <summary>Best-effort console setup; ignored where the console cannot be resized (redirected output, some terminals).</summary>
     public static void Setup()
     {
@@ -39,7 +45,32 @@ public class TextDisplay(Memory memory)
     }
 
     /// <summary>Returns the screen as text, one line per row.</summary>
-    public string Frame()
+    public string Frame() => Colour ? ColourFrame() : LetterFrame();
+
+    string ColourFrame()
+    {
+        byte[] pixels = Palette.Snapshot(memory);
+        var sb = new StringBuilder();
+        for (int row = 0; row < DisplaySettings.Rows; row++)
+        {
+            int previous = -1;
+            for (int col = 0; col < DisplaySettings.Columns; col++)
+            {
+                int colour = pixels[row * DisplaySettings.Columns + col];
+                if (colour != previous)
+                {
+                    var (r, g, b) = Palette.Rgb(colour);
+                    sb.Append("\u001b[48;2;").Append(r).Append(';').Append(g).Append(';').Append(b).Append('m');
+                    previous = colour;
+                }
+                sb.Append("  ");
+            }
+            sb.Append("\u001b[0m\n");
+        }
+        return sb.ToString();
+    }
+
+    string LetterFrame()
     {
         var sb = new StringBuilder(DisplaySettings.Size + DisplaySettings.Rows);
         for (int row = 0; row < DisplaySettings.Rows; row++)

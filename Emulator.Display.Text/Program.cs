@@ -25,7 +25,11 @@ const string Usage = """
     Usage: 6502net [program.asm | program.bin] [options]
 
       --headless N   run N instructions without a display, then print registers and the screen
+      --png FILE     with --headless, also save the final screen as a PNG
+      --scale N      pixel size of the PNG (default 8)
+      --mhz X        emulated clock speed in MHz (default 4)
       --no-throttle  run at full speed
+      --letters      draw pixels as letters a-p instead of colour blocks
       --list         list the bundled example programs
       -h, --help     show this help
 
@@ -37,6 +41,10 @@ const string Usage = """
 string? program = null;
 long? headless = null;
 bool throttle = true;
+bool letters = false;
+string? pngPath = null;
+int scale = 8;
+double mhz = 4;
 
 for (int i = 0; i < args.Length; i++)
 {
@@ -52,6 +60,20 @@ for (int i = 0; i < args.Length; i++)
         case "--headless" when i + 1 < args.Length && long.TryParse(args[i + 1], out long n):
             headless = n;
             i++;
+            break;
+        case "--png" when i + 1 < args.Length:
+            pngPath = args[++i];
+            break;
+        case "--scale" when i + 1 < args.Length && int.TryParse(args[i + 1], out int sc) && sc > 0:
+            scale = sc;
+            i++;
+            break;
+        case "--mhz" when i + 1 < args.Length && double.TryParse(args[i + 1], out double mh) && mh > 0:
+            mhz = mh;
+            i++;
+            break;
+        case "--letters":
+            letters = true;
             break;
         case "--no-throttle":
             throttle = false;
@@ -78,7 +100,7 @@ catch (Exception e) when (e is IOException or AssemblyException)
 
 var memory = new Memory();
 assembled.Load(memory);
-var processor = new Processor(memory, (ushort)assembled.Entry) { LimitProcessorSpeed = throttle && headless is null };
+var processor = new Processor(memory, (ushort)assembled.Entry);
 
 if (headless is long count)
 {
@@ -86,11 +108,13 @@ if (headless is long count)
     Console.WriteLine($"A={processor.A:X2} X={processor.X:X2} Y={processor.Y:X2} SP={processor.SP:X2} PC={processor.PC:X4} P={processor.Status:X2}");
     Console.WriteLine($"{processor.Instructions} instructions, {processor.Cycles} cycles, {(processor.ProgramRunning ? "still running" : "halted")}");
     Console.Write(new TextDisplay(memory).Frame());
+    if (pngPath is not null)
+        File.WriteAllBytes(pngPath, Palette.ToPng(memory, scale));
     return 0;
 }
 
 TextDisplay.Setup();
-var display = new TextDisplay(memory);
+var display = new TextDisplay(memory) { Colour = !letters && !Console.IsOutputRedirected };
 var cts = new CancellationTokenSource();
 Console.CancelKeyPress += (_, e) => { e.Cancel = true; cts.Cancel(); };
 
@@ -98,8 +122,11 @@ var executeThread = new Thread(() =>
 {
     try
     {
-        while (!cts.IsCancellationRequested && processor.ProgramRunning)
-            processor.Step();
+        if (throttle)
+            processor.RunRealtime(mhz * 1_000_000, cts.Token);
+        else
+            while (!cts.IsCancellationRequested && processor.ProgramRunning)
+                processor.Step();
     }
     catch (Exception e) when (e is Exceptions.InvalidOpCodeException or Exceptions.MemoryOutOfBoundsException)
     {

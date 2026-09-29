@@ -21,6 +21,18 @@ site run unchanged.
   `<label` / `>label`, simple `+`/`-` expressions) so programs can be written as readable `.asm` files.
 - Two front ends: a cross-platform **text display** and a **WinForms graphical display**.
 
+## Visual demos
+
+The 32x32 screen makes for some fun demos. These screenshots were produced with `--headless N --png`
+(see below); the animated ones (`tunnel`, `bouncing_ball`, `disco`, `random_dots`) move when run for real.
+
+| | | |
+| --- | --- | --- |
+| ![sierpinski](docs/screenshots/sierpinski.png) | ![smiley](docs/screenshots/smiley.png) | ![tunnel](docs/screenshots/tunnel.png) |
+| `sierpinski` | `smiley` | `tunnel` (animated) |
+| ![gradient](docs/screenshots/gradient.png) | ![disco](docs/screenshots/disco.png) | |
+| `gradient` | `disco` (animated) | |
+
 ## Getting started
 
 You need the [.NET 8 SDK](https://dotnet.microsoft.com/download).
@@ -33,8 +45,13 @@ dotnet run --project Emulator.Display.Text -- primes --headless 20000
 dotnet run --project Emulator.Display.Text -- path/to/my_program.asm
 ```
 
+In a terminal the text display draws true-colour blocks (Windows Terminal, iTerm2, GNOME Terminal and most modern
+terminals work); press Ctrl+C to quit. Options: `--mhz X` sets the emulated clock speed (default 4 MHz),
+`--no-throttle` runs flat out, and `--letters` draws each pixel as a letter (`a` = colour 0 ... `p` = colour 15).
+
 `--headless N` runs `N` instructions without a display and prints the registers and the screen, which is handy for
-scripts and CI. The text display draws each pixel as a letter (`a` = colour 0 ... `p` = colour 15); press Ctrl+C to quit.
+scripts and CI. Add `--png screen.png [--scale 8]` to save the final screen as an image, e.g.
+`dotnet run --project Emulator.Display.Text -- sierpinski --headless 100000 --png sierpinski.png`.
 
 On Windows the graphical display shows the real colours:
 
@@ -50,6 +67,10 @@ All examples live in [`Examples/`](Examples) and are covered by tests.
 | --- | --- |
 | `disco.asm` | Flashes the screen through all 16 colours |
 | `random_dots.asm` | Paints random pixels using the random byte at `$FE` and indirect indexed addressing |
+| `sierpinski.asm` | Sierpinski triangle from `x AND y == 0` |
+| `smiley.asm` | Draws an 8x8 bitmap scaled 4x with a bit-shifting loop |
+| `tunnel.asm` | Animated concentric colour rings using `min()` of four distances |
+| `bouncing_ball.asm` | A bouncing pixel: subroutines, signed deltas, collision flips |
 | `gradient.asm` | Draws a diagonal colour gradient with nested loops and 16 bit address arithmetic |
 | `fibonacci.asm` | Computes the Fibonacci sequence into memory |
 | `primes.asm` | Sieve of Eratosthenes for the primes below 128 |

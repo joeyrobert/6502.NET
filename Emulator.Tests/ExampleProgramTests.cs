@@ -107,4 +107,68 @@ public class ExampleProgramTests
         new Processor(mem, 0x600).Run(5_000);
         Assert.Contains(Enumerable.Range(0x200, 0x400), i => mem.Read(i) != 0);
     }
+
+    static byte Pixel(Memory memory, int x, int y) => (byte)(memory.Read(0x200 + y * 32 + x) & 0x0F);
+
+    [Fact]
+    public void SierpinskiLightsPixelsWhereXAndYAreDisjoint()
+    {
+        var (memory, cpu) = Run("sierpinski");
+        Assert.False(cpu.ProgramRunning);
+        for (int y = 0; y < 32; y++)
+            for (int x = 0; x < 32; x++)
+                Assert.Equal((x & y) == 0, Pixel(memory, x, y) != 0);
+    }
+
+    [Fact]
+    public void SmileyDrawsTheScaledSprite()
+    {
+        var (memory, cpu) = Run("smiley");
+        Assert.False(cpu.ProgramRunning);
+        Assert.Equal(6, Pixel(memory, 0, 0));   // blue corner
+        Assert.Equal(7, Pixel(memory, 16, 2));  // yellow forehead
+        Assert.Equal(6, Pixel(memory, 9, 9));   // eye
+        Assert.Equal(6, Pixel(memory, 15, 25)); // mouth
+    }
+
+    [Fact]
+    public void TunnelDrawsConcentricRingsThatCycleEachFrame()
+    {
+        var (memory, _) = Run("tunnel", 27_876 * 3); // three complete frames
+        // Frame counter is 3 here, so the last complete frame used 2.
+        Assert.Equal(2, Pixel(memory, 0, 0));
+        Assert.Equal(2, Pixel(memory, 31, 31));
+        Assert.Equal(3, Pixel(memory, 1, 20));
+        Assert.Equal((15 + 2) & 0x0F, Pixel(memory, 16, 16));
+    }
+
+    [Fact]
+    public void BouncingBallKeepsExactlyOnePixelLitAndStaysOnScreen()
+    {
+        string path = Path.Combine(AppContext.BaseDirectory, "Examples", "bouncing_ball.asm");
+        var program = Assembler.AssembleFile(path);
+        var memory = new Memory { RandomEnabled = false };
+        program.Load(memory);
+        var cpu = new Processor(memory, (ushort)program.Entry);
+        var seen = new HashSet<(int, int)>();
+        for (int i = 0; i < 400; i++)
+        {
+            cpu.Run(1_500); // roughly one frame
+            var lit = Enumerable.Range(0, 1024).Where(p => memory.Read(0x200 + p) != 0).ToList();
+            Assert.True(lit.Count <= 1);
+            foreach (int p in lit) seen.Add((p % 32, p / 32));
+        }
+        Assert.True(seen.Count > 20);
+        Assert.Contains(seen, p => p.Item1 == 0 || p.Item1 == 31);
+    }
+
+    [Fact]
+    public void PngExportProducesAValidImage()
+    {
+        var (memory, _) = Run("smiley");
+        byte[] png = Palette.ToPng(memory, 2);
+        Assert.Equal(new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A }, png[..8]);
+        Assert.Equal(64, System.Buffers.Binary.BinaryPrimitives.ReadInt32BigEndian(png.AsSpan(16)));
+        Assert.Equal(64, System.Buffers.Binary.BinaryPrimitives.ReadInt32BigEndian(png.AsSpan(20)));
+    }
 }

@@ -28,11 +28,8 @@ public class GraphicsDisplay : Form
     /// <summary>Last key pressed is stored here (ASCII), as on 6502asm.com.</summary>
     const int KeyAddress = 0xFF;
 
-    static readonly Color[] Palette =
-    [
-        Color.Black, Color.White, Color.DarkRed, Color.Cyan, Color.Purple, Color.Green, Color.Blue, Color.Yellow,
-        Color.Orange, Color.Brown, Color.Red, Color.DarkGray, Color.Gray, Color.LightGreen, Color.LightSkyBlue, Color.LightGray,
-    ];
+    /// <summary>Emulated clock speed.</summary>
+    const double ClockHertz = 4_000_000;
 
     readonly Memory _memory = new();
     readonly Processor _processor;
@@ -49,7 +46,7 @@ public class GraphicsDisplay : Form
         ClientSize = new Size(DisplaySettings.Columns * DisplaySettings.PixelWidth, DisplaySettings.Rows * DisplaySettings.PixelHeight);
 
         program.Load(_memory);
-        _processor = new Processor(_memory, (ushort)program.Entry) { LimitProcessorSpeed = true };
+        _processor = new Processor(_memory, (ushort)program.Entry);
         _executeThread = new Thread(Execute) { IsBackground = true };
 
         KeyPress += (_, e) => _memory.Set(KeyAddress, (byte)e.KeyChar);
@@ -66,8 +63,7 @@ public class GraphicsDisplay : Form
     {
         try
         {
-            while (_processor.ProgramRunning)
-                _processor.Step();
+            _processor.RunRealtime(ClockHertz);
         }
         catch (Exceptions.InvalidOpCodeException e)
         {
@@ -79,7 +75,7 @@ public class GraphicsDisplay : Form
     {
         for (int row = 0; row < DisplaySettings.Rows; row++)
             for (int col = 0; col < DisplaySettings.Columns; col++)
-                _screen.SetPixel(col, row, Palette[_memory.Read(DisplaySettings.Offset + row * DisplaySettings.Columns + col) & 0x0F]);
+                _screen.SetPixel(col, row, Color.FromArgb((int)(0xFF000000 | Palette.Colors[_memory.Read(DisplaySettings.Offset + row * DisplaySettings.Columns + col) & 0x0F])));
 
         e.Graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
         e.Graphics.PixelOffsetMode = PixelOffsetMode.Half;

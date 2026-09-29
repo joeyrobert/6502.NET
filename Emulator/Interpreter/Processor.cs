@@ -31,12 +31,6 @@ public class Processor
 
     readonly Memory _memory;
 
-    /// <summary>Slows execution down with a busy loop, for the interactive front ends.</summary>
-    public bool LimitProcessorSpeed { get; set; }
-
-    /// <summary>Iterations of the busy loop per instruction when <see cref="LimitProcessorSpeed"/> is set.</summary>
-    public int SpinWait { get; set; } = 5000;
-
     // Registers
     public byte A { get; set; }
     public byte X { get; set; }
@@ -133,6 +127,23 @@ public class Processor
         while (ProgramRunning && Instructions - start < maxInstructions)
             Step();
         return Instructions - start;
+    }
+
+    /// <summary>
+    /// Runs in real time at roughly <paramref name="hertz"/> cycles per second until the program halts
+    /// or <paramref name="cancellation"/> is signalled. Blocks the calling thread.
+    /// </summary>
+    public void RunRealtime(double hertz, CancellationToken cancellation = default)
+    {
+        var clock = System.Diagnostics.Stopwatch.StartNew();
+        long startCycles = Cycles;
+        while (ProgramRunning && !cancellation.IsCancellationRequested)
+        {
+            double due = clock.Elapsed.TotalSeconds * hertz;
+            while (ProgramRunning && !cancellation.IsCancellationRequested && Cycles - startCycles < due)
+                Step();
+            Thread.Sleep(1);
+        }
     }
 
     // --- Memory and stack helpers ---
@@ -305,9 +316,6 @@ public class Processor
     public int Step()
     {
         if (!ProgramRunning) return 0;
-
-        if (LimitProcessorSpeed)
-            Thread.SpinWait(SpinWait);
 
         long startCycles = Cycles;
         ushort opcodeAddress = PC;
